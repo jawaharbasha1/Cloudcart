@@ -7,6 +7,7 @@ import { login } from '../../store/slices/authSlice';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
+  const [activeRole, setActiveRole] = useState('user'); // 'user' or 'admin'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
@@ -53,6 +54,47 @@ export default function LoginPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-bg-card rounded-2xl border border-border p-6 space-y-4">
+          
+          {/* Tab Selector */}
+          <div className="flex p-1 rounded-xl bg-bg-primary border border-border mb-2">
+            <button
+              type="button"
+              onClick={() => {
+                setActiveRole('user');
+                setEmail('');
+                setPassword('');
+              }}
+              className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
+                activeRole === 'user'
+                  ? 'bg-accent-primary text-white shadow-md'
+                  : 'text-text-muted hover:text-text-primary'
+              }`}
+            >
+              Customer
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveRole('admin');
+                setEmail('admin@cloudcart.io');
+                setPassword('password123');
+              }}
+              className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
+                activeRole === 'admin'
+                  ? 'bg-accent-primary text-white shadow-md'
+                  : 'text-text-muted hover:text-text-primary'
+              }`}
+            >
+              Administrator
+            </button>
+          </div>
+
+          {activeRole === 'admin' && (
+            <div className="p-3 rounded-xl bg-accent-primary/5 border border-accent-primary/10 text-[11px] text-accent-primary leading-relaxed text-center font-medium">
+              💡 Pre-filled demo credentials for immediate administrator access.
+            </div>
+          )}
+
           {error && <div className="p-3 rounded-lg bg-danger/10 border border-danger/20 text-danger text-sm">{error}</div>}
           
           <div>
@@ -103,10 +145,12 @@ export default function LoginPage() {
             {!loading && <ArrowRight className="w-4 h-4" />}
           </button>
 
-          <p className="text-center text-sm text-text-muted">
-            Don't have an account?{' '}
-            <Link to="/signup" className="text-accent-primary hover:underline font-medium">Sign up</Link>
-          </p>
+          {activeRole === 'user' && (
+            <p className="text-center text-sm text-text-muted">
+              Don't have an account?{' '}
+              <Link to="/signup" className="text-accent-primary hover:underline font-medium">Sign up</Link>
+            </p>
+          )}
         </form>
       </motion.div>
     </div>
