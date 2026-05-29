@@ -2,9 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import axios from 'axios';
 import { initializeCart } from './store/slices/cartSlice';
-import { setProducts, setLoading, setError } from './store/slices/productSlice';
+import { fetchProducts } from './store/slices/productSlice';
 
 // Layouts
 import MainLayout from './components/layout/MainLayout';
@@ -33,23 +32,7 @@ function App() {
 
   useEffect(() => {
     dispatch(initializeCart());
-
-    const fetchProducts = async () => {
-      try {
-        dispatch(setLoading(true));
-        const { data } = await axios.get('/api/products');
-        if (data.success) {
-          dispatch(setProducts(data.data));
-        }
-      } catch (err) {
-        dispatch(setError('Failed to fetch products from backend'));
-        console.error(err);
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
-
-    fetchProducts();
+    dispatch(fetchProducts());
   }, [dispatch]);
 
   return (

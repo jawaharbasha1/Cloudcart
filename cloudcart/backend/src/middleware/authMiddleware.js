@@ -25,10 +25,11 @@ exports.protect = async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
 
-    // req.user = await User.findById(decoded.id);
-    
-    // Mock user for now
-    req.user = { id: decoded.id, name: 'Admin User', role: 'admin' };
+    req.user = await User.findById(decoded.id);
+
+    if (!req.user) {
+      return res.status(401).json({ success: false, error: 'User no longer exists' });
+    }
 
     next();
   } catch (err) {

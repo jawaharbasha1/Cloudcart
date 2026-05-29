@@ -17,22 +17,18 @@ const mockProducts = [
   { name: 'Monitoring Suite', description: 'Prometheus + Grafana monitoring with custom dashboards, alerting, and log aggregation', price: 179.99, category: 'Monitoring', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400', rating: 4.8, reviews: 267, stock: 150, tags: ['monitoring', 'observability'] }
 ];
 
-const mockUsers = [
-  { name: 'Admin User', email: 'admin@cloudcart.io', password: 'password123', role: 'admin' },
-  { name: 'Test User', email: 'user@example.com', password: 'password123', role: 'user' }
-];
-
 const importData = async () => {
   try {
     await Product.deleteMany();
     await User.deleteMany();
     await Order.deleteMany();
 
-    const createdUsers = await User.insertMany(mockUsers);
-    const adminUser = createdUsers[0]._id;
+    // Use User.create() for each user so the pre-save password hashing hook runs
+    const adminUser = await User.create({ name: 'Admin User', email: 'admin@cloudcart.io', password: 'password123', role: 'admin' });
+    await User.create({ name: 'Test User', email: 'user@example.com', password: 'password123', role: 'user' });
 
     const sampleProducts = mockProducts.map(product => {
-      return { ...product, user: adminUser };
+      return { ...product, user: adminUser._id };
     });
 
     await Product.insertMany(sampleProducts);

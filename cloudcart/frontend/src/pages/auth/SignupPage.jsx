@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Cloud, Mail, Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { loginSuccess } from '../../store/slices/authSlice';
+import { register } from '../../store/slices/authSlice';
 import toast from 'react-hot-toast';
 
 export default function SignupPage() {
@@ -13,15 +13,25 @@ export default function SignupPage() {
   const [showPw, setShowPw] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { loading, error } = useSelector(s => s.auth);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(loginSuccess({
-      user: { name: name || 'New User', email, role: 'user' },
-      token: 'mock-jwt-token-new-user'
-    }));
-    toast.success('Account created successfully!');
-    navigate('/dashboard');
+    if (!name || !email || !password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    try {
+      await dispatch(register({ name, email, password })).unwrap();
+      toast.success('Account created successfully!');
+      navigate('/dashboard');
+    } catch (err) {
+      toast.error(err || 'Registration failed');
+    }
   };
 
   return (
@@ -46,6 +56,8 @@ export default function SignupPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-bg-card rounded-2xl border border-border p-6 space-y-4">
+          {error && <div className="p-3 rounded-lg bg-danger/10 border border-danger/20 text-danger text-sm">{error}</div>}
+
           <div>
             <label className="block text-sm font-medium text-text-muted mb-1.5">Full Name</label>
             <div className="relative">
@@ -79,9 +91,9 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <button type="submit"
-            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-accent-primary to-accent-secondary text-white font-semibold text-sm hover:shadow-lg hover:shadow-accent-primary/25 transition-all flex items-center justify-center gap-2">
-            Create Account <ArrowRight className="w-4 h-4" />
+          <button type="submit" disabled={loading}
+            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-accent-primary to-accent-secondary text-white font-semibold text-sm hover:shadow-lg hover:shadow-accent-primary/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            {loading ? 'Creating Account...' : 'Create Account'} {!loading && <ArrowRight className="w-4 h-4" />}
           </button>
 
           <p className="text-center text-sm text-text-muted">

@@ -3,11 +3,8 @@ const jwt = require('jsonwebtoken');
 
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
-  // Create token
-  // const token = user.getSignedJwtToken();
-  const token = jwt.sign({ id: user._id || 'mockId123' }, process.env.JWT_SECRET || 'secret', {
-    expiresIn: process.env.JWT_EXPIRE || '30d'
-  });
+  // Create token using model method
+  const token = user.getSignedJwtToken();
 
   const options = {
     expires: new Date(
@@ -27,10 +24,10 @@ const sendTokenResponse = (user, statusCode, res) => {
       success: true,
       token,
       user: {
-        _id: user._id || 'mockId123',
-        name: user.name || 'Test User',
-        email: user.email || 'test@test.com',
-        role: user.role || 'user'
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
       }
     });
 };

@@ -1,11 +1,21 @@
 import { Bell, Search, Menu, User, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../../store/slices/authSlice';
 
 export default function DashboardHeader({ onMenuClick }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const { user } = useSelector(state => state.auth);
   const dropdownRef = useRef(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(logout());
+    navigate('/');
+  };
 
   useEffect(() => {
     const handler = (e) => {
@@ -59,7 +69,12 @@ export default function DashboardHeader({ onMenuClick }) {
                 <a href="#" className="block px-4 py-2 text-sm text-text-muted hover:text-text-primary hover:bg-white/5">Profile</a>
                 <a href="#" className="block px-4 py-2 text-sm text-text-muted hover:text-text-primary hover:bg-white/5">Settings</a>
                 <div className="border-t border-border my-1"></div>
-                <a href="/" className="block px-4 py-2 text-sm text-danger hover:bg-danger/10">Sign Out</a>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-sm text-danger hover:bg-danger/10 transition-colors"
+                >
+                  Sign Out
+                </button>
               </div>
             )}
           </div>
