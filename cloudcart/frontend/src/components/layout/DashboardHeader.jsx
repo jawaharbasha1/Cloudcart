@@ -59,7 +59,7 @@ export default function DashboardHeader({ onMenuClick }) {
               </div>
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-medium text-text-primary leading-tight">{user?.name || 'Admin User'}</p>
-                <p className="text-[11px] text-text-dim">Administrator</p>
+                <p className="text-[11px] text-text-dim capitalize">{user?.role || 'user'}</p>
               </div>
               <ChevronDown className="w-4 h-4 text-text-dim hidden sm:block" />
             </button>

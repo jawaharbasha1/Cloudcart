@@ -7,8 +7,8 @@ import { login } from '../../store/slices/authSlice';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('admin@cloudcart.io');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,7 +19,11 @@ export default function LoginPage() {
     try {
       const result = await dispatch(login({ email, password })).unwrap();
       toast.success('Welcome back!');
-      navigate('/dashboard');
+      if (result.user && result.user.role === 'admin') {
+        navigate('/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       toast.error(err || 'Login failed');
     }
