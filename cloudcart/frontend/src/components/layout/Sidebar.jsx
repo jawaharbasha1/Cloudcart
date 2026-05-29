@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { logout } from '../../store/slices/authSlice';
 import {
@@ -20,6 +20,8 @@ const navItems = [
 export default function Sidebar({ isOpen, onClose }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user } = useSelector(state => state.auth);
+  const isAdmin = user?.role === 'admin';
 
   const handleLogout = () => {
     dispatch(logout());
@@ -47,7 +49,7 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* Navigation */}
       <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
         <p className="px-3 py-2 text-[10px] font-semibold text-text-dim uppercase tracking-wider">Main</p>
-        {navItems.slice(0, 4).map(item => (
+        {navItems.slice(0, isAdmin ? 4 : 1).map(item => (
           <NavLink
             key={item.to}
             to={item.to}
@@ -76,57 +78,61 @@ export default function Sidebar({ isOpen, onClose }) {
           </NavLink>
         ))}
 
-        <p className="px-3 pt-4 pb-2 text-[10px] font-semibold text-text-dim uppercase tracking-wider">DevOps</p>
-        {navItems.slice(4, 6).map(item => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            onClick={onClose}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
-                isActive
-                  ? 'bg-accent-primary/10 text-accent-primary'
-                  : 'text-text-muted hover:text-text-primary hover:bg-white/5'
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <item.icon className={`w-[18px] h-[18px] ${isActive ? 'text-accent-primary' : 'text-text-dim group-hover:text-text-muted'}`} />
-                {item.label}
-                {isActive && (
-                  <motion.div
-                    layoutId="sidebar-active"
-                    className="ml-auto w-1.5 h-1.5 rounded-full bg-accent-primary"
-                  />
+        {isAdmin && (
+          <>
+            <p className="px-3 pt-4 pb-2 text-[10px] font-semibold text-text-dim uppercase tracking-wider">DevOps</p>
+            {navItems.slice(4, 6).map(item => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                    isActive
+                      ? 'bg-accent-primary/10 text-accent-primary'
+                      : 'text-text-muted hover:text-text-primary hover:bg-white/5'
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <item.icon className={`w-[18px] h-[18px] ${isActive ? 'text-accent-primary' : 'text-text-dim group-hover:text-text-muted'}`} />
+                    {item.label}
+                    {isActive && (
+                      <motion.div
+                        layoutId="sidebar-active"
+                        className="ml-auto w-1.5 h-1.5 rounded-full bg-accent-primary"
+                      />
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          </NavLink>
-        ))}
+              </NavLink>
+            ))}
 
-        <p className="px-3 pt-4 pb-2 text-[10px] font-semibold text-text-dim uppercase tracking-wider">System</p>
-        {navItems.slice(6).map(item => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            onClick={onClose}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
-                isActive
-                  ? 'bg-accent-primary/10 text-accent-primary'
-                  : 'text-text-muted hover:text-text-primary hover:bg-white/5'
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <item.icon className={`w-[18px] h-[18px] ${isActive ? 'text-accent-primary' : 'text-text-dim group-hover:text-text-muted'}`} />
-                {item.label}
-              </>
-            )}
-          </NavLink>
-        ))}
+            <p className="px-3 pt-4 pb-2 text-[10px] font-semibold text-text-dim uppercase tracking-wider">System</p>
+            {navItems.slice(6).map(item => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                    isActive
+                      ? 'bg-accent-primary/10 text-accent-primary'
+                      : 'text-text-muted hover:text-text-primary hover:bg-white/5'
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <item.icon className={`w-[18px] h-[18px] ${isActive ? 'text-accent-primary' : 'text-text-dim group-hover:text-text-muted'}`} />
+                    {item.label}
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </>
+        )}
       </nav>
 
       {/* Bottom */}

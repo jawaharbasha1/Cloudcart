@@ -13,7 +13,7 @@ export default function Navbar() {
   const links = [
     { to: '/', label: 'Home' },
     { to: '/products', label: 'Products' },
-    { to: '/dashboard', label: 'Dashboard' },
+    ...(isAuthenticated ? [{ to: '/dashboard', label: 'Dashboard' }] : []),
   ];
 
   return (
