@@ -1,21 +1,16 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_HUB_CREDENTIALS = credentials('docker-hub')
-        AWS_CREDENTIALS = credentials('aws-creds')
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/yourusername/cloudcart.git'
+                echo "Code already checked out automatically by Jenkins."
             }
         }
 
         stage('Build Frontend') {
             steps {
-                dir('frontend') {
+                dir('cloudcart/frontend') {
                     sh 'npm install'
                     sh 'npm run build'
                 }
@@ -24,31 +19,29 @@ pipeline {
 
         stage('Build Backend') {
             steps {
-                dir('backend') {
+                dir('cloudcart/backend') {
                     sh 'npm install'
-                    // Add tests here
                 }
             }
         }
 
         stage('Build Docker Images') {
             steps {
-                sh 'docker-compose build'
+                dir('cloudcart') {
+                    sh 'docker-compose build'
+                }
             }
         }
 
         stage('Push to Registry') {
             steps {
-                sh 'echo "Pushing images to registry..."'
-                // docker push commands
+                echo "Simulating push to Docker Registry..."
             }
         }
 
         stage('Deploy to AWS EC2') {
             steps {
-                sh 'echo "Deploying to AWS via SSH..."'
-                // scp docker-compose.yml to server
-                // ssh user@server "docker-compose pull && docker-compose up -d"
+                echo "Simulating deployment to AWS server..."
             }
         }
     }
